@@ -25,25 +25,23 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef __POOL__
-#define __POOL__
+#ifndef __WORKER__
+#define __WORKER__
 
-#include <hiredis/async.h>
+#include <pthread.h>
 
-struct conf;
-struct worker;
+struct http_client;
+struct pool;
 
-struct pool {
-    struct worker *w;
-    struct conf *cfg;
-    const redisAsyncContext **ac;
-    int count;
-    int cur;
+struct worker {
+    /* self */
+	pthread_t thread;
+	struct event_base *base;
+	/* connection dispatcher */
+	struct server *s;
+	int link[2];
+	/* Redis connection pool */
+	struct pool *pool;
 };
-
-struct pool *pool_new(struct worker *w, int count);
-void pool_free_context(redisAsyncContext *ac);
-redisAsyncContext *pool_connect(struct pool *p, int db_num, int attach);
-const redisAsyncContext *pool_get_context(struct pool *p);
 
 #endif
