@@ -92,4 +92,7 @@ struct conf {
 	char *default_root;
 };
 
+struct conf *conf_read(const char *filename);
+void conf_free(struct conf *conf);
+
 #endif
